@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart'; // Ganti dengan halaman tujuan setelah splash screen selesai
+import 'package:myapp/screens/welcome.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Berpindah ke halaman login setelah delay
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => WelcomeScreen()),
     );
   }
 
@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: Image.asset(
-          'assets/images/splash.png', // Menggunakan Image.asset untuk menampilkan gambar
+          'images/splash.png', // Menggunakan Image.asset untuk menampilkan gambar
           fit: BoxFit.cover, // Menyesuaikan gambar dengan ukuran layar
           width: double.infinity, // Memastikan gambar memenuhi lebar layar
           height: double.infinity, // Memastikan gambar memenuhi tinggi layar
