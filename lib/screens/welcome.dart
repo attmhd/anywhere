@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/screens/login_screen.dart';
+import 'package:myapp/screens/sign_up.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -17,7 +19,7 @@ class WelcomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start, // Start at the top
             crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
             children: [
-              SizedBox(height: 330),
+              SizedBox(height: 430),
               // Text section
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -36,6 +38,7 @@ class WelcomeScreen extends StatelessWidget {
                     Text(
                       'Makes it easier to find the right parking\nspace for your vehicle',
                       style: TextStyle(
+                        fontWeight: FontWeight.w200,
                         fontSize: 15,
                         color: Colors.white,
                       ),
@@ -59,7 +62,11 @@ class WelcomeScreen extends StatelessWidget {
                       height: 54,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Sign In action
+                          // Navigate to Login Screen when 'Sign In' is clicked
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginScreen()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
@@ -81,7 +88,11 @@ class WelcomeScreen extends StatelessWidget {
                       height: 54,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Sign Up action
+                          // Navigate to Register Screen when 'Sign Up' is clicked
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SignUpScreen()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
@@ -105,3 +116,5 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
+
+
