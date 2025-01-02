@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/widgets/register_form.dart'; 
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:myapp/widgets/register_form.dart';  // Correct import
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -15,12 +16,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  
+
   String? _selectedGender;
 
-  void _submitForm() {
+  // Method to send data to Supabase
+  Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Signing Up')));
+      // Get data from form
+      final name = _nameController.text;
+      final username = _usernameController.text;
+      final email = _emailController.text;
+      final phone = _phoneController.text;
+      final address = _addressController.text;
+      final password = _passwordController.text;
+
+      try {
+        // Send data to Supabase
+        final response = await Supabase.instance.client
+            .from('users') // Change to your table name
+            .insert([
+              {
+                'fullname': name,
+                'username': username,
+                'email': email,
+                'phone': phone,
+                'address': address,
+                'password': password,
+                'gender': _selectedGender,
+              }
+            ]);
+
+        if (response.error == null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign Up Successful!')));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response.error?.message}')));
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in all fields')));
     }
@@ -67,8 +100,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     minimumSize: Size(double.infinity, 54),
                     backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)
-                    )
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: Text('SUBMIT', style: TextStyle(fontSize: 20, color: Colors.white)),
                 ),
