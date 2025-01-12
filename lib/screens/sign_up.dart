@@ -30,10 +30,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final address = _addressController.text;
       final password = _passwordController.text;
 
-      try {
+      
         // Send data to Supabase
-        final response = await Supabase.instance.client
-            .from('users') // Change to your table name
+      await Supabase.instance.client
+            .from('user') // Change to your table name
             .insert([
               {
                 'fullname': name,
@@ -45,15 +45,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 'gender': _selectedGender,
               }
             ]);
+          
+        // Show success message with AlertDialog
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Success'),
+              content: Text('Sign up successful!'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
 
-        if (response.error == null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign Up Successful!')));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response.error?.message}')));
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in all fields')));
     }

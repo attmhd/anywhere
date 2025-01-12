@@ -10,7 +10,7 @@ void main() async {
 
   // Load .env variables with error handling
   try {
-    await dotenv.load(fileName: "../.env");
+    await dotenv.load(fileName: ".env");
     print(".env file loaded successfully");
   } catch (e) {
     print("Error loading .env file: $e");
