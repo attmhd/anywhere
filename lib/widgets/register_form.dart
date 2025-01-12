@@ -130,8 +130,8 @@ Widget buildPhoneField(TextEditingController phoneController) {
       if (value == null || value.isEmpty) {
         return 'Please enter your phone number';
       }
-      if (value.length < 10) {
-        return 'Phone number must be at least 10 digits';
+      if (value.length < 12) {
+        return 'Phone number must be at least 12 digits';
       }
       return null;
     },
