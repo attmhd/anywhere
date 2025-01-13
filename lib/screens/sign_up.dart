@@ -6,152 +6,199 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-
+  final _controllers = _SignUpControllers();
   String? _selectedGender;
 
-  // Method to send data to Supabase
+  @override
+  void dispose() {
+    _controllers.dispose();
+    super.dispose();
+  }
+
   Future<void> _submitForm() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final name = _nameController.text.trim();
-      final username = _usernameController.text.trim();
-      final email = _emailController.text.trim();
-      final phone = _phoneController.text.trim();
-      final address = _addressController.text.trim();
-      final password = _passwordController.text.trim();
+    if (!_isFormValid()) return;
 
-      if (_selectedGender == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select a gender')),
-        );
-        return;
-      }
-
-      // Hash password dengan SHA-256
-      var bytes = utf8.encode(password);
-      var hashedPassword = sha256.convert(bytes).toString();
-
-      try {
-        await Supabase.instance.client.from('user').insert({
-            'fullname': name,
-            'username': username,
-            'email': email,
-            'phone': phone,
-            'address': address,
-            'password': hashedPassword,
-            'gender': _selectedGender,
-        });
-
-        if (mounted) {
-          showCustomAlert(
-            context: context,
-            title: "Succes", 
-            message: "Sign up successful!",
-            icon: Icons.check_circle,
-            iconColor: Colors.green,
-            buttonText: "OK",
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-          );
-        }
-      } catch (error) {
-        if (mounted) {
-
-          showCustomAlert(
-            context: context,
-            title: "Error",
-            message: "Sign up failed: ${error.toString()}",
-            icon: Icons.error,
-            iconColor: Colors.red,
-          );
-        }
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields')),
-      );
+    try {
+      await _saveUserData();
+      if (mounted) _showSuccessAlert();
+    } catch (error) {
+      if (mounted) _showErrorAlert(error.toString());
     }
   }
 
+  bool _isFormValid() {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      _showSnackBar('Please fill in all fields');
+      return false;
+    }
+    if (_selectedGender == null) {
+      _showSnackBar('Please select a gender');
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _saveUserData() async {
+    final userData = {
+      'fullname': _controllers.name.text.trim(),
+      'username': _controllers.username.text.trim(),
+      'email': _controllers.email.text.trim(),
+      'phone': _controllers.phone.text.trim(),
+      'address': _controllers.address.text.trim(),
+      'password': _hashPassword(_controllers.password.text.trim()),
+      'gender': _selectedGender,
+    };
+
+    await Supabase.instance.client.from('user').insert(userData);
+  }
+
+  String _hashPassword(String password) {
+    final bytes = utf8.encode(password);
+    return sha256.convert(bytes).toString();
+  }
+
+  void _showSuccessAlert() {
+    showCustomAlert(
+      context: context,
+      title: "Success",
+      message: "Sign up successful!",
+      icon: Icons.check_circle,
+      iconColor: Colors.green,
+      buttonText: "OK",
+      onPressed: () => Navigator.pushNamed(context, '/signIn'),
+    );
+  }
+
+  void _showErrorAlert(String error) {
+    showCustomAlert(
+      context: context,
+      title: "Error",
+      message: "Sign up failed: $error",
+      icon: Icons.error,
+      iconColor: Colors.red,
+    );
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Sign Up',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      centerTitle: true,
+      title: const Text(
+        'Sign Up',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
         ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: 34),
-                  buildNameField(_nameController),
-                  SizedBox(height: 24),
-                  buildUsernameField(_usernameController),
-                  SizedBox(height: 24),
-                  buildEmailField(_emailController),
-                  SizedBox(height: 24),
-                  buildPhoneField(_phoneController),
-                  SizedBox(height: 24),
-                  buildGenderField(_selectedGender, (newValue) {
-                    setState(() {
-                      _selectedGender = newValue;
-                    });
-                  }),
-                  SizedBox(height: 24),
-                  buildAddressField(_addressController),
-                  SizedBox(height: 24),
-                  buildPasswordField(_passwordController),
-                  SizedBox(height: 24),
-                  buildConfirmPasswordField(_confirmPasswordController, _passwordController),
-                  SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 54),
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'SUBMIT',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(height: 20), // Tambahkan padding agar tidak terlalu bawah
-                ],
-              ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () => Navigator.pushNamed(context, '/welcome'),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 34),
+                _buildFormFields(),
+                const SizedBox(height: 24),
+                _buildSubmitButton(),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildFormFields() {
+    return Column(
+      children: [
+        buildNameField(_controllers.name),
+        const SizedBox(height: 24),
+        buildUsernameField(_controllers.username),
+        const SizedBox(height: 24),
+        buildEmailField(_controllers.email),
+        const SizedBox(height: 24),
+        buildPhoneField(_controllers.phone),
+        const SizedBox(height: 24),
+        buildGenderField(_selectedGender, (newValue) {
+          setState(() => _selectedGender = newValue);
+        }),
+        const SizedBox(height: 24),
+        buildAddressField(_controllers.address),
+        const SizedBox(height: 24),
+        buildPasswordField(_controllers.password),
+        const SizedBox(height: 24),
+        buildConfirmPasswordField(_controllers.confirmPassword, _controllers.password),
+      ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return ElevatedButton(
+      onPressed: _submitForm,
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 54),
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: const Text(
+        'SUBMIT',
+        style: TextStyle(fontSize: 20, color: Colors.white),
+      ),
+    );
+  }
+}
+
+class _SignUpControllers {
+  final name = TextEditingController();
+  final username = TextEditingController();
+  final email = TextEditingController();
+  final phone = TextEditingController();
+  final address = TextEditingController();
+  final password = TextEditingController();
+  final confirmPassword = TextEditingController();
+
+  void dispose() {
+    name.dispose();
+    username.dispose();
+    email.dispose();
+    phone.dispose();
+    address.dispose();
+    password.dispose();
+    confirmPassword.dispose();
   }
 }

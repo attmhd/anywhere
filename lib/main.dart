@@ -1,82 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:myapp/screens/sign_in.dart';
+import 'package:myapp/screens/sign_up.dart';
+import 'package:myapp/screens/welcome.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:myapp/screens/splash_sceen.dart'; // Sesuaikan path jika perlu
+import 'package:myapp/screens/splash_sceen.dart';
 
-void main() async {
-  // Pastikan WidgetsBinding sudah terinisialisasi sebelum melakukan operasi lainnya
+Future<void> main() async {
+  await initializeApp();
+}
+
+class AppRoutes {
+  static const String splash = '/';
+  static const String signIn = '/signIn';
+  static const String signUp = '/signUp';
+  static const String welcome = '/welcome';
+
+  static Map<String, WidgetBuilder> get routes => {
+        splash: (context) => SplashScreen(),
+        signIn: (context) => LoginScreen(),
+        signUp: (context) => SignUpScreen(),
+        welcome: (context) => WelcomeScreen(),
+      };
+}
+
+Future<void> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Load .env variables with error handling
+  
   try {
-    await dotenv.load(fileName: ".env");
-    print(".env file loaded successfully");
+    await _loadEnvironmentVariables();
+    await _initializeSupabase();
+    runApp(MyApp());
   } catch (e) {
-    print("Error loading .env file: $e");
-    runApp(MyAppWithError(message: "Error loading .env file!"));  // Show an error screen if .env fails to load
-    return;  // Stop execution if .env fails to load
+    print('Initialization error: $e');
+    runApp(ErrorApp(message: e.toString()));
   }
+}
 
-  // Ambil URL dan anonKey dari file .env
-  String? supabaseUrl = dotenv.env['SUPABASE_URL'];
-  String? supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
-
-  // Pastikan URL dan anonKey tidak null
-  if (supabaseUrl == null || supabaseAnonKey == null) {
-    print('Missing Supabase credentials in .env file!');
-    runApp(MyAppWithError(message: "Missing Supabase credentials!"));
-    return; // Stop execution if credentials are missing
+Future<void> _loadEnvironmentVariables() async {
+  await dotenv.load(fileName: ".env");
+  if (dotenv.env['SUPABASE_URL'] == null || dotenv.env['SUPABASE_ANON_KEY'] == null) {
+    throw 'Missing Supabase credentials in .env file!';
   }
+}
 
-  // Inisialisasi Supabase dengan URL dan anon key dari file .env
-  try {
-    await Supabase.initialize(
-      url: supabaseUrl,  // Mengambil URL dari file .env
-      anonKey: supabaseAnonKey,  // Mengambil anon key dari file .env
-    );
-    print("Supabase initialized successfully");
-  } catch (e) {
-    print("Error initializing Supabase: $e");
-    runApp(MyAppWithError(message: "Error initializing Supabase!"));  // Show an error screen if Supabase fails to initialize
-    return;  // Stop execution if Supabase initialization fails
-  }
-
-  // Jalankan aplikasi setelah Supabase diinisialisasi
-  runApp(MyApp());
+Future<void> _initializeSupabase() async {
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: AppRoutes.splash,
+      routes: AppRoutes.routes,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: SplashScreen(),  // Mengarah ke SplashScreen atau screen awal
     );
   }
 }
 
-// Custom error screen widget
-class MyAppWithError extends StatelessWidget {
+class ErrorApp extends StatelessWidget {
   final String message;
 
-  MyAppWithError({required this.message});
+  const ErrorApp({Key? key, required this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(
-          title: Text("Error"),
-        ),
+        appBar: AppBar(title: const Text('Error')),
         body: Center(
           child: Text(
             message,
-            style: TextStyle(fontSize: 20, color: Colors.red),
+            style: const TextStyle(fontSize: 20, color: Colors.red),
             textAlign: TextAlign.center,
           ),
         ),

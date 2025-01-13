@@ -7,72 +7,102 @@ import '../widgets/background_image.dart';
 import '../widgets/custom_alert.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  String _hashPassword(String password) {
+    final bytes = utf8.encode(password);
+    return sha256.convert(bytes).toString();
+  }
+
+  void _showAlert({
+    required String title,
+    required String message,
+    required IconData icon,
+    required Color iconColor,
+    String buttonText = 'OK',
+    VoidCallback? onPressed,
+  }) {
+    showCustomAlert(
+      context: context,
+      title: title,
+      message: message,
+      icon: icon,
+      iconColor: iconColor,
+      buttonText: buttonText,
+      onPressed: onPressed,
+    );
+  }
+
+  Future<Map<String, dynamic>?> _authenticateUser(String email) async {
+    return await Supabase.instance.client
+        .from('user')
+        .select()
+        .eq('email', email)
+        .limit(1)
+        .single();
+  }
+
   Future<void> _submitForm() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final email = _emailController.text.trim();
-      final password = _passwordController.text.trim();
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
-      try {
-        final response = await Supabase.instance.client
-            .from('user')
-            .select()
-            .eq('email', email)
-            .limit(1)
-            .single();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
-        if (response == null) {
-          showCustomAlert(
-            context: context,
-            title: "Error",
-            message: "Email not found",
-            icon: Icons.error,
-            iconColor: Colors.red,
-          );
-          return;
-        }
+    try {
+      final response = await _authenticateUser(email);
 
-        var bytes = utf8.encode(password);
-        var hashedPassword = sha256.convert(bytes).toString();
-
-        if (response['password'] == hashedPassword) {
-          showCustomAlert(
-            context: context,
-            title: "Success",
-            message: "Sign In Successful!",
-            icon: Icons.check_circle,
-            iconColor: Colors.green,
-            buttonText: "OK",
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          );
-        } else {
-          showCustomAlert(
-            context: context,
-            title: "Error",
-            message: "Incorrect password",
-            icon: Icons.error,
-            iconColor: Colors.red,
-          );
-        }
-      } catch (error) {
-        showCustomAlert(
-          context: context,
+      if (response == null) {
+        _showAlert(
           title: "Error",
-          message: "Login failed: Email not found",
-          icon: Icons.warning,
-          iconColor: Colors.orange,
+          message: "Email not found",
+          icon: Icons.error,
+          iconColor: Colors.red,
+        );
+        return;
+      }
+
+      final hashedPassword = _hashPassword(password);
+
+      if (response['password'] == hashedPassword) {
+        _showAlert(
+          title: "Success",
+          message: "Sign In Successful!",
+          icon: Icons.check_circle,
+          iconColor: Colors.green,
+          buttonText: "OK",
+          onPressed: () => Navigator.of(context).pop(),
+        );
+      } else {
+        _showAlert(
+          title: "Error",
+          message: "Incorrect password",
+          icon: Icons.error,
+          iconColor: Colors.red,
         );
       }
+    } catch (error) {
+      _showAlert(
+        title: "Error",
+        message: "Login failed: Email not found",
+        icon: Icons.warning,
+        iconColor: Colors.orange,
+      );
     }
   }
 
