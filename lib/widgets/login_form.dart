@@ -110,11 +110,11 @@ class LoginForm extends StatelessWidget {
     );
   }
 
-  Widget _buildSignUpRedirect(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Redirecting to Sign Up')));
+    Widget _buildSignUpRedirect(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        // Navigate to the sign-up page (you can replace this with your own sign-up screen)
+        Navigator.pushNamed(context, '/signUp'); // Make sure to define '/signUp' in your routes
       },
       child: Text(
         "Don't have an account? Sign Up",
