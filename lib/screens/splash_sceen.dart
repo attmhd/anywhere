@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:myapp/screens/welcome.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -17,11 +19,11 @@ class _SplashScreenState extends State<SplashScreen> {
   // Fungsi asynchronous untuk menunggu dan berpindah ke halaman login
   Future<void> _navigateToLogin() async {
     // Menunggu 5 detik
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     // Berpindah ke halaman login setelah delay
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => WelcomeScreen()),
+      MaterialPageRoute(builder: (context) => const WelcomeScreen()),
     );
   }
 

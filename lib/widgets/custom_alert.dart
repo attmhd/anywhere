@@ -21,16 +21,16 @@ Future<void> showCustomAlert({
           children: [
             if (icon != null) ...[
               Icon(icon, color: iconColor ?? Colors.blue, size: 28),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
             ],
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
-        content: Text(message, style: TextStyle(fontSize: 16)),
+        content: Text(message, style: const TextStyle(fontSize: 16)),
         actions: [
           TextButton(
             onPressed: onPressed ?? () => Navigator.of(context).pop(),
-            child: Text(buttonText, style: TextStyle(color: Colors.blue)),
+            child: Text(buttonText, style: const TextStyle(color: Colors.blue)),
           ),
         ],
       );

@@ -7,12 +7,12 @@ Widget buildNameField(TextEditingController controller) {
     decoration: InputDecoration(
       hintText: 'Enter your name',
       filled: true,
-      fillColor: Color(0xFFF3F8FF),
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.grey),
+      fillColor: const Color(0xFFF3F8FF),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
       ),
     ),
     validator: (value) {
@@ -31,12 +31,12 @@ Widget buildUsernameField(TextEditingController controller) {
     decoration: InputDecoration(
       hintText: 'Enter your username',
       filled: true,
-      fillColor: Color(0xFFF3F8FF),
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.grey),
+      fillColor: const Color(0xFFF3F8FF),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
       ),
     ),
     validator: (value) {
@@ -55,12 +55,12 @@ Widget buildEmailField(TextEditingController controller) {
     decoration: InputDecoration(
       hintText: 'Enter your email',
       filled: true,
-      fillColor: Color(0xFFF3F8FF),
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.grey),
+      fillColor: const Color(0xFFF3F8FF),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
       ),
     ),
     validator: (value) {
@@ -82,15 +82,15 @@ Widget buildGenderField(String? selectedGender, Function(String?) onChanged) {
     decoration: InputDecoration(
       hintText: 'Select your gender',
       filled: true,
-      fillColor: Color(0xFFF3F8FF),
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.grey),
+      fillColor: const Color(0xFFF3F8FF),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
       ),
     ),
-    items: [
+    items: const [
       DropdownMenuItem(
         value: 'Man',
         child: Text('Man'),
@@ -118,12 +118,12 @@ Widget buildPhoneField(TextEditingController phoneController) {
     decoration: InputDecoration(
       hintText: 'Enter your phone number',
       filled: true,
-      fillColor: Color(0xFFF3F8FF),
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.grey),
+      fillColor: const Color(0xFFF3F8FF),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
       ),
     ),
     validator: (value) {
@@ -145,12 +145,12 @@ Widget buildAddressField(TextEditingController controller) {
     decoration: InputDecoration(
       hintText: 'Enter your address',
       filled: true,
-      fillColor: Color(0xFFF3F8FF),
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.grey),
+      fillColor: const Color(0xFFF3F8FF),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
       ),
     ),
     validator: (value) {
@@ -170,12 +170,12 @@ Widget buildPasswordField(TextEditingController controller) {
     decoration: InputDecoration(
       hintText: 'Enter your password',
       filled: true,
-      fillColor: Color(0xFFF3F8FF),
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.grey),
+      fillColor: const Color(0xFFF3F8FF),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
       ),
     ),
     validator: (value) {
@@ -198,12 +198,12 @@ Widget buildConfirmPasswordField(TextEditingController controller, TextEditingCo
     decoration: InputDecoration(
       hintText: 'Confirm your password',
       filled: true,
-      fillColor: Color(0xFFF3F8FF),
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.grey),
+      fillColor: const Color(0xFFF3F8FF),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
       ),
     ),
     validator: (value) {

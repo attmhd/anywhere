@@ -86,7 +86,7 @@ class LoginScreenState extends State<LoginScreen> {
           icon: Icons.check_circle,
           iconColor: Colors.green,
           buttonText: "OK",
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.pushNamed(context, '/home'),
         );
       } else {
         _showAlert(

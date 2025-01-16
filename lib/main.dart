@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:myapp/screens/home.dart';
+import 'package:myapp/screens/profile.dart';
 import 'package:myapp/screens/sign_in.dart';
 import 'package:myapp/screens/sign_up.dart';
+import 'package:myapp/screens/top_up.dart';
 import 'package:myapp/screens/welcome.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:myapp/screens/splash_sceen.dart';
@@ -16,12 +19,18 @@ class AppRoutes {
   static const String signIn = '/signIn';
   static const String signUp = '/signUp';
   static const String welcome = '/welcome';
+  static const String home = '/home';
+  static const String profile = '/profile';
+  static const String topup = '/topup';
 
   static Map<String, WidgetBuilder> get routes => {
         splash: (context) => SplashScreen(),
-        signIn: (context) => LoginScreen(),
-        signUp: (context) => SignUpScreen(),
-        welcome: (context) => WelcomeScreen(),
+        signIn: (context) => const LoginScreen(),
+        signUp: (context) => const SignUpScreen(),
+        welcome: (context) => const WelcomeScreen(),
+        home: (context) => const HomeScreen(),
+        profile: (context) => const ProfileScreen(),
+        topup: (context) => const TopUpScreen(),
       };
 }
 
@@ -53,6 +62,8 @@ Future<void> _initializeSupabase() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -69,7 +80,7 @@ class MyApp extends StatelessWidget {
 class ErrorApp extends StatelessWidget {
   final String message;
 
-  const ErrorApp({Key? key, required this.message}) : super(key: key);
+  const ErrorApp({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {

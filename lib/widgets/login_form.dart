@@ -6,7 +6,7 @@ class LoginForm extends StatelessWidget {
   final TextEditingController passwordController;
   final VoidCallback onSubmit;
 
-  const LoginForm({
+  const LoginForm({super.key, 
     required this.formKey,
     required this.emailController,
     required this.passwordController,
@@ -20,15 +20,15 @@ class LoginForm extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 220),
+          const SizedBox(height: 220),
           _buildTextSignIn(),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           _buildEmailField(),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           _buildPasswordField(),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           _buildSignInButton(),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           _buildSignUpRedirect(context),
         ],
       ),
@@ -36,7 +36,7 @@ class LoginForm extends StatelessWidget {
   }
 
   Widget _buildTextSignIn() {
-    return Text(
+    return const Text(
       'Sign In',
       style: TextStyle(
         fontSize: 35,
@@ -49,15 +49,15 @@ class LoginForm extends StatelessWidget {
   Widget _buildEmailField() {
     return TextFormField(
       controller: emailController,
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: 'Email',
         filled: false,
         fillColor: Colors.white,
-        labelStyle: TextStyle(color: Colors.black),
+        labelStyle: const TextStyle(color: Colors.black),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(35),
-          borderSide: BorderSide(color: Colors.grey, width: 15),
+          borderSide: const BorderSide(color: Colors.grey, width: 15),
         ),
       ),
       validator: (value) {
@@ -77,13 +77,13 @@ class LoginForm extends StatelessWidget {
     return TextFormField(
       controller: passwordController,
       obscureText: true,
-      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w200),
+      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w200),
       decoration: InputDecoration(
         hintText: 'Password',
         filled: false,
         fillColor: Colors.white,
         border: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey, width: 15),
+          borderSide: const BorderSide(color: Colors.grey, width: 15),
           borderRadius: BorderRadius.circular(35),
         ),
       ),
@@ -100,10 +100,10 @@ class LoginForm extends StatelessWidget {
     return ElevatedButton(
       onPressed: onSubmit,
       style: ElevatedButton.styleFrom(
-        minimumSize: Size(double.infinity, 54),
+        minimumSize: const Size(double.infinity, 54),
         backgroundColor: Colors.white,
       ),
-      child: Text(
+      child: const Text(
         'Sign In',
         style: TextStyle(fontSize: 20, color: Colors.black),
       ),
@@ -116,7 +116,7 @@ class LoginForm extends StatelessWidget {
         // Navigate to the sign-up page (you can replace this with your own sign-up screen)
         Navigator.pushNamed(context, '/signUp'); // Make sure to define '/signUp' in your routes
       },
-      child: Text(
+      child: const Text(
         "Don't have an account? Sign Up",
         style: TextStyle(
           color: Colors.white,
