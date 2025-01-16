@@ -24,7 +24,7 @@ class AppRoutes {
   static const String topup = '/topup';
 
   static Map<String, WidgetBuilder> get routes => {
-        splash: (context) => SplashScreen(),
+        splash: (context) => const SplashScreen(),
         signIn: (context) => const LoginScreen(),
         signUp: (context) => const SignUpScreen(),
         welcome: (context) => const WelcomeScreen(),
