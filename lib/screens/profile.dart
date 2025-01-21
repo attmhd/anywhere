@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/providers/user_provider.dart'; // Import UserProvider
 import 'package:myapp/widgets/bottom_navigation.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -6,12 +8,20 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch the user data from UserProvider
+    final user = Provider.of<UserProvider>(context).user;
+
+    // Default values if user data is null
+    final String userName = user?['fullname'] ?? 'Guest';
+    final String userEmail = user?['email'] ?? 'example@domain.com';
+    final String userPhone = user?['phone'] ?? '+62 81345543';
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeader(),
+            _buildHeader(userName, userEmail, userPhone),  // Pass user data to header
             const SizedBox(height: 20),
             _buildSettingsList(),
             const SizedBox(height: 20),
@@ -22,7 +32,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  // Updated Header to reflect dynamic user data
+  Widget _buildHeader(String userName, String userEmail, String userPhone) {
     return Stack(
       children: [
         Container(
@@ -49,18 +60,18 @@ class ProfileScreen extends StatelessWidget {
                 backgroundImage: AssetImage('andrew.jpg'),
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Fauzi',
-                style: TextStyle(
+              Text(
+                userName,  // Display dynamic user name
+                style: const TextStyle(
                   fontSize: 22,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 5),
-              const Text(
-                'Attankeren@domain.com | +62 81345543',
-                style: TextStyle(
+              Text(
+                '$userEmail | $userPhone',  // Display dynamic email and phone number
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.white,
                 ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/providers/user_provider.dart';  // Import UserProvider
 import 'package:myapp/widgets/bottom_navigation.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -6,16 +8,21 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch the user data from UserProvider
+    final user = Provider.of<UserProvider>(context).user;
+
+    // // Default values if user data is null
+    final String userName = user?['fullname'] ?? 'Guest';
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            const HeaderSection(),
+            HeaderSection(userName: userName),  // Pass user name to header
             const SizedBox(height: 20),
             const ButtonsSection(),
             const SizedBox(height: 20),
-            const BalanceAndMapSection(),
             const SizedBox(height: 20),
             const VehicleSection(),
             const Spacer(),
@@ -28,7 +35,9 @@ class HomeScreen extends StatelessWidget {
 }
 
 class HeaderSection extends StatelessWidget {
-  const HeaderSection({super.key});
+  final String userName;
+
+  const HeaderSection({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +57,22 @@ class HeaderSection extends StatelessWidget {
             ),
           ),
         ),
-        const Positioned(
+        Positioned(
           left: 20,
           top: 40,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Hi,\nMohammed",
-                style: TextStyle(
+                "Hi,\n$userName",
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
-              Text(
+              const SizedBox(height: 8),
+              const Text(
                 "Where we go?",
                 style: TextStyle(
                   color: Colors.white,
@@ -135,7 +144,9 @@ class ButtonsSection extends StatelessWidget {
 }
 
 class BalanceAndMapSection extends StatelessWidget {
-  const BalanceAndMapSection({super.key});
+  final String balance;
+
+  const BalanceAndMapSection({super.key, required this.balance});
 
   @override
   Widget build(BuildContext context) {
@@ -157,19 +168,19 @@ class BalanceAndMapSection extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 children: [
-                  Text(
+                  const Text(
                     "Mohammed",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    "IDR 50.000",
-                    style: TextStyle(
+                    balance,  // Display the user balance
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                       color: Colors.black,

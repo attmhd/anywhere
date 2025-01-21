@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:myapp/providers/user_provider.dart';
 import 'package:myapp/screens/home.dart';
 import 'package:myapp/screens/profile.dart';
 import 'package:myapp/screens/sign_in.dart';
 import 'package:myapp/screens/sign_up.dart';
 import 'package:myapp/screens/top_up.dart';
 import 'package:myapp/screens/welcome.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:myapp/screens/splash_sceen.dart';
 
@@ -40,7 +42,12 @@ Future<void> initializeApp() async {
   try {
     await _loadEnvironmentVariables();
     await _initializeSupabase();
-    runApp(MyApp());
+    runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: MyApp(),
+    ),
+  );
   } catch (e) {
     print('Initialization error: $e');
     runApp(ErrorApp(message: e.toString()));

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import '../widgets/login_form.dart';
 import '../widgets/background_image.dart';
 import '../widgets/custom_alert.dart';
+import '../providers/user_provider.dart';  // Import the UserProvider
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -80,6 +82,9 @@ class LoginScreenState extends State<LoginScreen> {
       final hashedPassword = _hashPassword(password);
 
       if (response['password'] == hashedPassword) {
+        // Set the user data using the UserProvider
+        Provider.of<UserProvider>(context, listen: false).setUser(response);
+        
         _showAlert(
           title: "Success",
           message: "Sign In Successful!",
