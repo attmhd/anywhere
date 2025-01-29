@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
     // Fetch the user data from UserProvider
     final user = Provider.of<UserProvider>(context).user;
 
-    // // Default values if user data is null
+    // Default values if user data is null
     final String userName = user?['fullname'] ?? 'Guest';
 
     return Scaffold(
@@ -22,7 +22,6 @@ class HomeScreen extends StatelessWidget {
             HeaderSection(userName: userName),  // Pass user name to header
             const SizedBox(height: 20),
             const ButtonsSection(),
-            const SizedBox(height: 20),
             const SizedBox(height: 20),
             const VehicleSection(),
             const Spacer(),
@@ -82,12 +81,12 @@ class HeaderSection extends StatelessWidget {
             ],
           ),
         ),
-        const Positioned(
+        Positioned(
           right: 20,
           top: 40,
           child: CircleAvatar(
             radius: 25,
-            backgroundImage: AssetImage('andrew.jpg'),
+            backgroundImage: AssetImage('images/andrew.jpg'), // Ensure image exists
           ),
         ),
       ],
@@ -131,7 +130,7 @@ class ButtonsSection extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: const DecorationImage(
-                  image: AssetImage('images/ticket.jpeg'),
+                  image: AssetImage('images/ticket.jpeg'), // Ensure image exists
                   fit: BoxFit.cover,
                 ),
               ),
@@ -230,33 +229,40 @@ class VehicleSection extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
         ),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Vehicle",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+            ElevatedButton(
+              onPressed: () {
+                // Action for Vehicle
+                Navigator.pushNamed(context, '/parkingDetails');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(
+                "Vehicle",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
             ),
             SizedBox(height: 80),
             ListTile(
               leading: Icon(Icons.directions_car, color: Colors.green),
-              title: Text("Agya GR Sport"),
+              title: Text("Agya GR Sport", style: TextStyle(color: Colors.white)),
               subtitle: Text("Online"),
             ),
             ListTile(
               leading: Icon(Icons.directions_car, color: Colors.red),
-              title: Text("Pajero Sport"),
+              title: Text("Pajero Sport", style: TextStyle(color: Colors.white)),
               subtitle: Text("Offline"),
             ),
           ],

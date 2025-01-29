@@ -23,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             _buildHeader(userName, userEmail, userPhone),  // Pass user data to header
             const SizedBox(height: 20),
-            _buildSettingsList(),
+            _buildSettingsList(context),
             const SizedBox(height: 20),
             const BottomNavBar(),
           ],
@@ -83,7 +83,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsList() {
+  Widget _buildSettingsList(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -145,9 +145,11 @@ class ProfileScreen extends StatelessWidget {
             onTap: () {},
           ),
           _buildSettingsTile(
-            icon: Icons.privacy_tip,
-            title: 'Privacy policy',
-            onTap: () {},
+            icon: Icons.arrow_back,
+            title: 'Sign out',
+            onTap: () {
+              Navigator.pushNamed(context, '/signIn');
+            },
           ),
         ],
       ),

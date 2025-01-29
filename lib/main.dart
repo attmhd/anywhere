@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:myapp/providers/user_provider.dart';
 import 'package:myapp/screens/home.dart';
+import 'package:myapp/screens/parkir_details.dart';
 import 'package:myapp/screens/profile.dart';
 import 'package:myapp/screens/sign_in.dart';
 import 'package:myapp/screens/sign_up.dart';
@@ -24,6 +25,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String profile = '/profile';
   static const String topup = '/topup';
+  static const String parkingDetails = '/parkingDetails';
 
   static Map<String, WidgetBuilder> get routes => {
         splash: (context) => const SplashScreen(),
@@ -33,6 +35,7 @@ class AppRoutes {
         home: (context) => const HomeScreen(),
         profile: (context) => const ProfileScreen(),
         topup: (context) => const TopUpScreen(),
+        parkingDetails: (context) => const ParkingDetailsPage(),
       };
 }
 

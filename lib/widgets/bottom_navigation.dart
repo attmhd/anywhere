@@ -36,7 +36,9 @@ class BottomNavBar extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.directions_car, size: 30),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/parkingDetails');
+            },
           ),
           IconButton(
             icon: const Icon(Icons.history, size: 30),
