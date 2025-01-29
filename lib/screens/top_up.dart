@@ -3,42 +3,23 @@ import 'package:myapp/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:myapp/widgets/bottom_navigation.dart';
-import 'package:intl/intl.dart'; // Ensure intl package is added in pubspec.yaml
+import 'package:intl/intl.dart';
+import 'package:myapp/widgets/custom_alert.dart';
 
-class TopUpScreen extends StatelessWidget {
+
+class TopUpScreen extends StatefulWidget {
   const TopUpScreen({super.key});
 
   @override
+  _TopUpScreenState createState() => _TopUpScreenState();
+}
+
+class _TopUpScreenState extends State<TopUpScreen> {
+  @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
-
-    final String userId = user?['user_id'] ?? 'Guest'; // Get the userId
+    final String userId = user?['user_id'] ?? 'Guest';
     final String userName = user?['fullname'] ?? 'Guest';
-
-    // Function to fetch saldo data based on userId
-    Future<Map<String, dynamic>> getSaldo(String userId) async {
-      final response = await Supabase.instance.client
-          .from('saldo')
-          .select('balance, id') // Fetch both balance and saldo ID
-          .eq('user_id', userId)
-          .single(); // Use .single() to return one record
-
-    
-      return response;
-    }
-
-    // Function to fetch top-up history
-    Future<List<Map<String, dynamic>>> getTopUpHistory(int saldoId) async {
-      final response = await Supabase.instance.client
-          .from('top_up')
-          .select()
-          .eq('saldo_id', saldoId)
-          .order('created_at', ascending: false)
-          .limit(5);
-
-    
-      return List<Map<String, dynamic>>.from(response);
-    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -50,40 +31,35 @@ class TopUpScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 30),
-              // Use FutureBuilder to show saldo balance
               FutureBuilder<Map<String, dynamic>>(
                 future: getSaldo(userId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(); // Loading spinner while fetching
+                    return const CircularProgressIndicator();
                   }
-
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   }
-
                   if (!snapshot.hasData || snapshot.data == null) {
                     return const Text('No saldo found for the user');
                   }
 
-                  final saldo = snapshot.data!['balance']; // Get the balance
-                  final saldoId = snapshot.data!['id']; // Get the saldo ID
+                  final saldo = snapshot.data!['balance'];
+                  final saldoId = snapshot.data!['id'];
 
-                  // Fetch top-up history using the saldo ID
                   return FutureBuilder<List<Map<String, dynamic>>>(
                     future: getTopUpHistory(saldoId),
                     builder: (context, topUpSnapshot) {
                       if (topUpSnapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
                       }
-
                       if (topUpSnapshot.hasError) {
                         return Text('Error: ${topUpSnapshot.error}');
                       }
 
                       return Column(
                         children: [
-                          _buildBalanceCard(context, saldo, userName),
+                          _buildBalanceCard(context, saldo, userName, saldoId),
                           const SizedBox(height: 20),
                           _buildRecentTransactionsHeader(),
                           const SizedBox(height: 10),
@@ -101,8 +77,38 @@ class TopUpScreen extends StatelessWidget {
     );
   }
 
-  // Update _buildBalanceCard to accept saldo balance dynamically
-  Widget _buildBalanceCard(BuildContext context, dynamic saldo, String userName) {
+  Future<Map<String, dynamic>> getSaldo(String userId) async {
+    final response = await Supabase.instance.client
+        .from('saldo')
+        .select('balance, id')
+        .eq('user_id', userId)
+        .single();
+    return response;
+  }
+
+  Future<List<Map<String, dynamic>>> getTopUpHistory(int saldoId) async {
+    final response = await Supabase.instance.client
+        .from('top_up')
+        .select()
+        .eq('saldo_id', saldoId)
+        .order('created_at', ascending: false)
+        .limit(5);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<void> insertTopUp(int saldoId, int amount) async {
+    final response = await Supabase.instance.client.from('top_up').insert({
+      'saldo_id': saldoId,
+      'amount': amount,
+      'created_at': DateTime.now().toIso8601String(),
+    });
+
+    if (response.error != null) {
+      throw Exception('Failed to insert top-up: ${response.error!.message}');
+    }
+  }
+
+  Widget _buildBalanceCard(BuildContext context, dynamic saldo, String userName, int saldoId) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -152,7 +158,9 @@ class TopUpScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton.icon(
-                onPressed: () => _showTopUpModal(context),
+                onPressed: () => _showTopUpModal(context, saldoId, () {
+                  setState(() {});
+                }),
                 icon: const Icon(Icons.add),
                 label: const Text('Add Balance'),
                 style: ElevatedButton.styleFrom(
@@ -178,7 +186,15 @@ class TopUpScreen extends StatelessWidget {
     );
   }
 
-  void _showTopUpModal(BuildContext context) {
+  void _showSuccesAlert(){
+    showCustomAlert(context: context, title: "Succes", icon: Icons.check_circle, iconColor: Colors.green , message: "Top up succes", onPressed: () {
+      Navigator.pushNamed(context, '/topup');
+    });
+  }
+
+  void _showTopUpModal(BuildContext context, int saldoId, VoidCallback onSuccess) {
+    final TextEditingController amountController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (context) => Center(
@@ -197,6 +213,7 @@ class TopUpScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
+                  controller: amountController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: 'Amount',
@@ -214,9 +231,26 @@ class TopUpScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: () {
-                        // Handle top-up logic here
-                        Navigator.pop(context);
+                      onPressed: ()  {
+                        final amount = int.tryParse(amountController.text);
+                         if (amount != null) {
+                           insertTopUp(saldoId, amount);
+                           _showSuccesAlert();
+                         } else {
+                           // Handle the case where amount is null
+                           showCustomAlert(
+                             context: context,
+                             title: "Error",
+                             icon: Icons.error,
+                             iconColor: Colors.red,
+                             message: "Please enter a valid amount",
+                             onPressed: () {
+                               Navigator.pop(context);
+                             },
+                           );
+                         }
+                        _showSuccesAlert();
+                        
                       },
                       child: const Text('Top Up'),
                     ),
@@ -250,9 +284,9 @@ class TopUpScreen extends StatelessWidget {
         return ListTile(
           leading: const Icon(Icons.monetization_on),
           title: Text('Transaction ${index + 1}'),
-            subtitle: Text(
+          subtitle: Text(
             DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(transaction['created_at'])),
-            ),
+          ),
           trailing: Text('IDR ${transaction['amount']}'),
         );
       },
